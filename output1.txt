@@ -1,0 +1,291 @@
+mysql> notee 
+mysql> SELECT
+    ->     s1.event_id,
+    ->     s1.session_id AS session1,
+    ->     s2.session_id AS session2
+    -> FROM Sessions s1
+    -> JOIN Sessions s2
+    -> ON s1.event_id = s2.event_id
+    -> AND s1.session_id < s2.session_id
+    -> AND s1.start_time < s2.end_time
+    -> AND s1.end_time > s2.start_time;
+ERROR 1046 (3D000): No database selected
+mysql> use tes_db
+ERROR 1049 (42000): Unknown database 'tes_db'
+mysql> use test_db
+Database changed
+mysql> SELECT
+    ->     s1.event_id,
+    ->     s1.session_id AS session1,
+    ->     s2.session_id AS session2
+    -> FROM Sessions s1
+    -> JOIN Sessions s2
+    -> ON s1.event_id = s2.event_id
+    -> AND s1.session_id < s2.session_id
+    -> AND s1.start_time < s2.end_time
+    -> AND s1.end_time > s2.start_time;
+Empty set (0.01 sec)
+
+mysql> Terminal close -- exit!
+mysql> system cld
+mysql> system cls;
+mysql> select u.user_id,u.full_name from Users u join Registrations r on u.user_id=r.user_id where r.registration_date>=(curdate() - INTERVAL 30 DAY;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '' at line 1
+mysql> select u.user_id,u.full_name from Users u join Registrations r on u.user_id=r.user_id where r.registration_date>=(curdate() - INTERVAL 30 DAY);
+Empty set (0.01 sec)
+
+mysql> select u.user_id,u.full_name from Users u join Registrations r on u.user_id=r.user_id where u.registration_date>=(curdate() - INTERVAL 30 DAY);
+Empty set (0.00 sec)
+
+mysql> select u.user_id,u.full_name from Users u join Registrations r on u.user_id=r.user_id where u.registration_date>=(curdate() - INTERVAL 30 DAY) and r.event_id is null;
+Empty set (0.00 sec)
+
+mysql> select u.user_id,u.full_name from Users u join Registrations r on u.user_id=r.user_id where u.registration_date>=(curdate() - INTERVAL 30 DAY) and r.event_id is null group by u.user_id;
+Empty set (0.01 sec)
+
+mysql> select u.user_id,u.full_name from Users u join Registrations r on u.user_id=r.user_id where u.registration_date>=(curdate() - INTERVAL 30 DAY) and r.event_id is null;
+Empty set (0.00 sec)
+
+mysql> select speaker_name,max(session) from(select count(session_id) as session from Sessions) t;
+ERROR 1054 (42S22): Unknown column 'speaker_name' in 'field list'
+mysql> select speaker_name,max(session) from Sessions(select count(session_id) as session from Sessions) t;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '(select count(session_id) as session from Sessions) t' at line 1
+mysql> select speaker_name,max(session) from Sessions where(select count(session_id) as session from Sessions);
+ERROR 1054 (42S22): Unknown column 'session' in 'field list'
+mysql> select speaker_name,max(session) from Sessions where(select count(session_id) as session from Sessions group by speaker_name);
+ERROR 1054 (42S22): Unknown column 'session' in 'field list'
+mysql> select speaker_name,max(session) from Sessions where(select count(session_id) as session from Sessions group by speaker_name);
+ERROR 1054 (42S22): Unknown column 'session' in 'field list'
+mysql> SELECT speaker_name,
+    ->        COUNT(session_id) AS total_sessions
+    -> FROM Sessions
+    -> GROUP BY speaker_name
+    -> HAVING COUNT(session_id) > 1;
+Empty set (0.00 sec)
+
+mysql> select * from Resources where event_id is null;
+Empty set (0.00 sec)
+
+mysql> select resource_id from Resources r join Events e on r.event_id=e.event_id where r.event_id is null;
+Empty set (0.00 sec)
+
+mysql> select e.event_id,r.resource_id from Resources r join Events e on r.event_id=e.event_id where r.event_id is null;
+Empty set (0.00 sec)
+
+mysql> notee 
+mysql> select e.title,count(r.resgistration_id) as total,avg(f.rating) from Events e join Registrations r on e.event_id=r.event_id join Feedback f on e.event_id=f.event_id where status='completed' group by e.event_id;
+ERROR 1054 (42S22): Unknown column 'r.resgistration_id' in 'field list'
+mysql> select e.title,count(r.resgitration_id) as total,avg(f.rating) from Events e join Registrations r on e.event_id=r.event_id join Feedback f on e.event_id=f.event_id where status='completed' group by e.event_id;
+ERROR 1054 (42S22): Unknown column 'r.resgitration_id' in 'field list'
+mysql> select e.title,count(r.registration_id) as total,avg(f.rating) from Events e join Registrations r on e.event_id=r.event_id join Feedback f on e.event_id=f.event_id where status='completed' group by e.event_id;
++--------------------+-------+---------------+
+| title              | total | avg(f.rating) |
++--------------------+-------+---------------+
+| AI & ML Conference |     4 |        4.5000 |
++--------------------+-------+---------------+
+1 row in set (0.01 sec)
+
+mysql> select e.title,count(r.registration_id) as total,avg(f.rating) from Events e join Registrations r on e.event_id=r.event_id join Feedback f on e.event_id=f.event_id where status='completed' group by e.event_id,e.title;
++--------------------+-------+---------------+
+| title              | total | avg(f.rating) |
++--------------------+-------+---------------+
+| AI & ML Conference |     4 |        4.5000 |
++--------------------+-------+---------------+
+1 row in set (0.01 sec)
+
+mysql> select e.title,count(r.registration_id) as total,avg(f.rating) from Events e join Registrations r on e.event_id=r.event_id join Feedback f on e.event_id=f.event_id where status='completed' group by e.event_id,e.titler.registration_id;
+ERROR 1054 (42S22): Unknown column 'e.titler.registration_id' in 'group statement'
+mysql> select e.title,count(r.registration_id) as total,avg(f.rating) from Events e join Registrations r on e.event_id=r.event_id join Feedback f on e.event_id=f.event_id where status='completed' group by e.event_id,e.title,r.registration_id;
++--------------------+-------+---------------+
+| title              | total | avg(f.rating) |
++--------------------+-------+---------------+
+| AI & ML Conference |     2 |        4.5000 |
+| AI & ML Conference |     2 |        4.5000 |
++--------------------+-------+---------------+
+2 rows in set (0.00 sec)
+
+mysql> select e.title,count(distinct r.registration_id) as total,avg(f.rating) from Events e join Registrations r on e.event_id=r.event_id join Feedback f on e.event_id=f.event_id where status='completed' group by e.event_id,e.titler.registration_id;
+ERROR 1054 (42S22): Unknown column 'e.titler.registration_id' in 'group statement'
+mysql> select e.title,count(distinct r.registration_id) as total,avg(f.rating) from Events e join Registrations r on e.event_id=r.event_id join Feedback f on e.event_id=f.event_id where status='completed' group by e.event_id,e.title;
++--------------------+-------+---------------+
+| title              | total | avg(f.rating) |
++--------------------+-------+---------------+
+| AI & ML Conference |     2 |        4.5000 |
++--------------------+-------+---------------+
+1 row in set (0.01 sec)
+
+mysql> select e.title,count(distinct r.registration_id) as total,avg(f.rating) from Events e join Registrations r on e.event_id=r.event_id join Feedback f on e.event_id=f.event_id where e.status='completed' group by e.event_id,e.title;
++--------------------+-------+---------------+
+| title              | total | avg(f.rating) |
++--------------------+-------+---------------+
+| AI & ML Conference |     2 |        4.5000 |
++--------------------+-------+---------------+
+1 row in set (0.00 sec)
+
+mysql> select u.user_id,u.full_name,count(e.event_id),count(f.feedback_id) as Events_attended from Users u left join Registrations r on u.user_id=r.registration_id left join Events e on r.event_id=e.event_id join Feedback f on r.user_id=f.user_id group by r.event_id,f.feedbac_id;
+ERROR 1054 (42S22): Unknown column 'f.feedbac_id' in 'group statement'
+mysql> select u.user_id,u.full_name,count(e.event_id),count(f.feedback_id) as Events_attended from Users u left join Registrations r on u.user_id=r.registration_id left join Events e on r.event_id=e.event_id join Feedback f on r.user_id=f.user_id group by r.event_id,f.feedback_id;
+ERROR 1055 (42000): Expression #1 of SELECT list is not in GROUP BY clause and contains nonaggregated column 'test_db.u.user_id' which is not functionally dependent on columns in GROUP BY clause; this is incompatible with sql_mode=only_full_group_by
+mysql> select u.user_id,u.full_name,count(e.event_id),count(f.feedback_id) as Events_attended from Users u left join Registrations r on u.user_id=r.user_id left join Events e on r.event_id=e.event_id join Feedback f on r.user_id=f.user_id group by r.event_id,f.feedbac_id;
+ERROR 1054 (42S22): Unknown column 'f.feedbac_id' in 'group statement'
+mysql> select u.user_id,u.full_name,count(e.event_id),count(f.feedback_id) as Events_attended from Users u left join Registrations r on u.user_id=r.user_id left join Events e on r.event_id=e.event_id join Feedback f on r.user_id=f.user_id group by r.event_id,f.feedback_id;
++---------+-------------+-------------------+-----------------+
+| user_id | full_name   | count(e.event_id) | Events_attended |
++---------+-------------+-------------------+-----------------+
+|       2 | Bob Smith   |                 1 |               1 |
+|       3 | Charlie Lee |                 1 |               1 |
+|       4 | Diana King  |                 1 |               1 |
++---------+-------------+-------------------+-----------------+
+3 rows in set (0.01 sec)
+
+mysql> select u.user_id,u.full_name,count(e.event_id),count(f.feedback_id) as Events_attended from Users u left join Registrations r on u.user_id=r.user_id left join Events e on r.event_id=e.event_id join Feedback f on r.user_id=f.user_id group by u.user_id,u.full_name;
++---------+-------------+-------------------+-----------------+
+| user_id | full_name   | count(e.event_id) | Events_attended |
++---------+-------------+-------------------+-----------------+
+|       2 | Bob Smith   |                 1 |               1 |
+|       3 | Charlie Lee |                 1 |               1 |
+|       4 | Diana King  |                 1 |               1 |
++---------+-------------+-------------------+-----------------+
+3 rows in set (0.00 sec)
+
+mysql> SELECT
+    ->     u.user_id,
+    ->     u.full_name,
+    ->     COUNT(DISTINCT r.event_id) AS events_attended,
+    ->     COUNT(DISTINCT f.feedback_id) AS feedbacks_submitted
+    -> FROM Users u
+    -> LEFT JOIN Registrations r
+    -> ON u.user_id = r.user_id
+    -> LEFT JOIN Feedback f
+    -> ON u.user_id = f.user_id
+    -> GROUP BY u.user_id, u.full_name;
++---------+---------------+-----------------+---------------------+
+| user_id | full_name     | events_attended | feedbacks_submitted |
++---------+---------------+-----------------+---------------------+
+|       1 | Alice Johnson |               1 |                   0 |
+|       2 | Bob Smith     |               1 |                   1 |
+|       3 | Charlie Lee   |               1 |                   1 |
+|       4 | Diana King    |               1 |                   1 |
+|       5 | Ethan Hunt    |               1 |                   0 |
++---------+---------------+-----------------+---------------------+
+5 rows in set (0.01 sec)
+
+mysql> select u.user_id,u.full_name,count(e.event_id),count(f.feedback_id) as Events_attended from Users u left join Registrations r on u.user_id=r.user_id left join Events e on r.event_id=e.event_id left join Feedback f on r.user_id=f.user_id group by u.user_id,u.full_name;
++---------+---------------+-------------------+-----------------+
+| user_id | full_name     | count(e.event_id) | Events_attended |
++---------+---------------+-------------------+-----------------+
+|       1 | Alice Johnson |                 1 |               0 |
+|       2 | Bob Smith     |                 1 |               1 |
+|       3 | Charlie Lee   |                 1 |               1 |
+|       4 | Diana King    |                 1 |               1 |
+|       5 | Ethan Hunt    |                 1 |               0 |
++---------+---------------+-------------------+-----------------+
+5 rows in set (0.00 sec)
+
+mysql> select u.user_id,u.full_name,count(f.feedback_id) as entries from Users u join feedback f on u.user_id=f.user_id group by u.user_id order by entries desc limit 5;
++---------+-------------+---------+
+| user_id | full_name   | entries |
++---------+-------------+---------+
+|       2 | Bob Smith   |       1 |
+|       3 | Charlie Lee |       1 |
+|       4 | Diana King  |       1 |
++---------+-------------+---------+
+3 rows in set (0.01 sec)
+
+mysql> select u.user_id,u.full_name,count(f.feedback_id) as entries from Users u join feedback f on u.user_id=f.user_id group by u.user_id order by entries desc limit 5;
++---------+-------------+---------+
+| user_id | full_name   | entries |
++---------+-------------+---------+
+|       2 | Bob Smith   |       1 |
+|       3 | Charlie Lee |       1 |
+|       4 | Diana King  |       1 |
++---------+-------------+---------+
+3 rows in set (0.01 sec)
+
+mysql> select u.user_id,u.full_name,count(f.feedback_id) as entries from Users u join feedback f on u.user_id=f.user_id group by u.user_id order by entries desc limit 5;
++---------+-------------+---------+
+| user_id | full_name   | entries |
++---------+-------------+---------+
+|       2 | Bob Smith   |       1 |
+|       3 | Charlie Lee |       1 |
+|       4 | Diana King  |       1 |
++---------+-------------+---------+
+3 rows in set (0.00 sec)
+
+mysql> select u.user_id,u.full_name,count(r.registration_id) as total from Users u join Registraitons r on u.user_id=r.user_id where total>1 group by e.event_id;
+ERROR 1146 (42S02): Table 'test_db.registraitons' doesn't exist
+mysql> select u.user_id,u.full_name,count(r.registration_id) as total from Users u join Registrations r on u.user_id=r.user_id where total>1 group by e.event_id;
+ERROR 1054 (42S22): Unknown column 'total' in 'where clause'
+mysql> select u.user_id,u.full_name,count(r.registration_id) as total from Users u join Registrations r on u.user_id=r.user_id group by e.event_id having total>1;
+ERROR 1054 (42S22): Unknown column 'e.event_id' in 'group statement'
+mysql> select u.user_id,u.full_name,count(r.registration_id) as total from Users u join Registrations r on u.user_id=r.user_id group by r.event_id having total>1;
+ERROR 1055 (42000): Expression #1 of SELECT list is not in GROUP BY clause and contains nonaggregated column 'test_db.u.user_id' which is not functionally dependent on columns in GROUP BY clause; this is incompatible with sql_mode=only_full_group_by
+mysql> select u.user_id,u.full_name,count(r.registration_id) as total from Users u join Registrations r on u.user_id=r.user_id group by u.user_id having total>1;
+Empty set (0.00 sec)
+
+mysql> select u.user_id,u.full_name,count(r.registration_id) as total from Users u join Registrations r on u.user_id=r.user_id group by u.user_id,r.event_id having total>1;
+Empty set (0.00 sec)
+
+mysql> select u.user_id,u.full_name,count(r.registration_id) as total from Users u join Registrations r on u.user_id=r.user_id group by u.user_id,r.event_id,u.full_name having total>1;
+Empty set (0.00 sec)
+
+mysql> SELECT
+    ->     YEAR(registration_date) AS year,
+    ->     MONTH(registration_date) AS month,
+    ->     COUNT(*) AS total_registrations
+    -> FROM Registrations
+    -> WHERE registration_date >= DATE_SUB(CURDATE(), INTERVAL 12 MONTH)
+    -> GROUP BY YEAR(registration_date), MONTH(registration_date)
+    -> ORDER BY year, month;
++------+-------+---------------------+
+| year | month | total_registrations |
++------+-------+---------------------+
+| 2025 |     6 |                   1 |
++------+-------+---------------------+
+1 row in set (0.01 sec)
+
+mysql> system cls
+mysql> select e.title, AVG(TIMESTAMPDIFF(MINUTE, s.start_time, s.end_time)) AS avg_duration from Events e join Sessions s on e.event_id= s.event_id group by e.event_id;
++-------------------------------+--------------+
+| title                         | avg_duration |
++-------------------------------+--------------+
+| Tech Innovators Meetup        |      67.5000 |
+| AI & ML Conference            |      90.0000 |
+| Frontend Development Bootcamp |     120.0000 |
++-------------------------------+--------------+
+3 rows in set (0.01 sec)
+
+mysql> select e.title, timestampdiff(hour, s.start_time, s.end_time)) AS avg_duration from Events e join Sessions s on e.event_id= s.event_id group by e.event_id;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ') AS avg_duration from Events e join Sessions s on e.event_id= s.event_id group ' at line 1
+mysql> select e.title, avg(timestampdiff(hour, s.start_time, s.end_time)) AS avg_duration from Events e join Sessions s on e.event_id= s.event_id group by e.event_id;
++-------------------------------+--------------+
+| title                         | avg_duration |
++-------------------------------+--------------+
+| Tech Innovators Meetup        |       1.0000 |
+| AI & ML Conference            |       1.0000 |
+| Frontend Development Bootcamp |       2.0000 |
++-------------------------------+--------------+
+3 rows in set (0.00 sec)
+
+mysql> select e.title, avg(timestampdiff(seconds, s.start_time, s.end_time)) AS avg_duration from Events e join Sessions s on e.event_id= s.event_id group by e.event_id;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'seconds, s.start_time, s.end_time)) AS avg_duration from Events e join Sessions ' at line 1
+mysql> select e.title, avg(timestampdiff(secs, s.start_time, s.end_time)) AS avg_duration from Events e join Sessions s on e.event_id= s.event_id group by e.event_id;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'secs, s.start_time, s.end_time)) AS avg_duration from Events e join Sessions s o' at line 1
+mysql> select e.title, avg(timestampdiff(sec, s.start_time, s.end_time)) AS avg_duration from Events e join Sessions s on e.event_id= s.event_id group by e.event_id;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'sec, s.start_time, s.end_time)) AS avg_duration from Events e join Sessions s on' at line 1
+mysql> select e.title, avg(timestampdiff(second, s.start_time, s.end_time)) AS avg_duration from Events e join Sessions s on e.event_id= s.event_id group by e.event_id;
++-------------------------------+--------------+
+| title                         | avg_duration |
++-------------------------------+--------------+
+| Tech Innovators Meetup        |    4050.0000 |
+| AI & ML Conference            |    5400.0000 |
+| Frontend Development Bootcamp |    7200.0000 |
++-------------------------------+--------------+
+3 rows in set (0.00 sec)
+
+mysql> select e.title from Sessions where e.event_id is null;
+ERROR 1054 (42S22): Unknown column 'e.title' in 'field list'
+mysql> select e.title from Events e join Sessions s on e.event_id=s.event_id where e.event_id is null;
+Empty set (0.03 sec)
+
+mysql> notee
